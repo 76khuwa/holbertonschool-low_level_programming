@@ -1,6 +1,5 @@
-#ifndef DYNAMIC_LIB
-#define DYNAMIC_LIB
-#include<stdlib.h>
+#ifndef _HOLBERTON_H_
+#define _HOLBERTON_H_
 
 int _putchar(char c);
 int _islower(int c);
