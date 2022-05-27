@@ -1,9 +1,11 @@
 #include "hash_tables.h"
+
 /**
- * key_index - function that returns the index of a key.
- * @key: string to be looked for
- * @size: size of the array of the hash table
- * Return: index of a key
+ * key_index - Gets the hash table index for a given key
+ * @key: The key of the data to be entered
+ * @size: The size of the target hash table
+ *
+ * Return: The index to store the value for the key
  */
 unsigned long int key_index(const unsigned char *key, unsigned long int size)
 {

@@ -1,45 +1,81 @@
 #include "hash_tables.h"
+#include <stdlib.h>
+#include <string.h>
+
 /**
- * hash_table_set - function that adds an element to the hash table.
- * @ht: pointer to the hash table structure
- * @key: string to be looked for
- * @value: value of the data
- * Return: 1 on success or 0 on error
+ * hash_table_set - Sets a value in a given hash table given a key
+ * @ht: Pointer to the hash table
+ * @key: Pointer to the key
+ * @value: Pointer to the value
+ *
+ * Return: 1 on succes, 0 otherwise
  */
 int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 {
-	hash_node_t *new = NULL;
-	hash_node_t *tmp = NULL;
-	int idx;
+	hash_node_t *node;
+	unsigned long int index;
+	char *nval;
 
-	if (ht == NULL || key == NULL || strlen(key) == 0)
+	if (!key || !*key || !value || !ht)
 		return (0);
 
-	idx = key_index((const unsigned char *)key, ht->size);
+	index = key_index((const unsigned char *)key, ht->size);
 
-	tmp = ht->array[idx];
-	while (tmp)
+	if (ht->array[index] != NULL)
 	{
-		if (strcmp(tmp->key, key) == 0)
+		node = ht->array[index];
+		while (node)
 		{
-			free(tmp->value);
-			tmp->value = strdup(value);
-			return (1);
+			if (strcmp(node->key, key) == 0)
+			{
+				nval = strdup(value);
+				if (!nval)
+					return (0);
+				free(node->value);
+				node->value = nval;
+				return (1);
+			}
+			node = node->next;
 		}
-		tmp = tmp->next;
 	}
 
-	new = malloc(sizeof(hash_node_t *));
-	if (!new)
+	return (assign(key, value, ht));
+}
+
+/**
+ * assign - Assigns and mallocs values for the hash item
+ * @key: The hash item's key
+ * @value: The hash item's value
+ * @ht: Pointer to the target hash table
+ *
+ * Return: 1 for success, otherwie 0
+ */
+int assign(const char *key, const char *value, hash_table_t *ht)
+{
+	hash_node_t *node;
+	unsigned long int index = key_index((const unsigned char *)key, ht->size);
+
+	node = malloc(sizeof(hash_node_t));
+	if (!node)
 		return (0);
 
-	new->value = strdup(value);
-	new->key = strdup(key);
-	new->next = NULL;
+	node->key = strdup(key);
+	if (!node->key)
+	{
+		free(node);
+		return (0);
+	}
 
-	if (ht->array[idx] != NULL)
-		new->next = ht->array[idx];
+	node->value = strdup(value);
+	if (!node->value)
+	{
+		free(node->key);
+		free(node);
+		return (0);
+	}
 
-	ht->array[idx] = new;
+	node->next = ht->array[index];
+	ht->array[index] = node;
+
 	return (1);
 }

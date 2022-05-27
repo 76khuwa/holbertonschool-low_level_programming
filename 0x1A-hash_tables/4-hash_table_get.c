@@ -1,26 +1,29 @@
 #include "hash_tables.h"
+#include <stdlib.h>
+#include <string.h>
+
 /**
- * hash_table_get - function that adds an element to the hash table.
- * @ht: pointer to the hash table structure
- * @key: string to be looked for
- * Return: pointer to the value string
+ * hash_table_get - Gets a value given a key from a hash table
+ * @ht: Pointer to the hash table
+ * @key: Pointer to the string key
+ *
+ * Return: The value found for the key, or NULL if no value
  */
 char *hash_table_get(const hash_table_t *ht, const char *key)
 {
-	unsigned long int idx = 0;
+	unsigned long int index;
 	hash_node_t *tmp;
 
-	if (ht == NULL || key == NULL)
+	if (!key || !*key || !ht)
 		return (NULL);
 
-	idx = key_index((const unsigned char *)key, ht->size);
-	tmp = ht->array[idx];
+	index = key_index((const unsigned char *)key, ht->size);
 
-	while (tmp)
+	for (tmp = ht->array[index]; tmp; tmp = tmp->next)
 	{
 		if (strcmp(tmp->key, key) == 0)
 			return (tmp->value);
-		tmp = tmp->next;
 	}
+
 	return (NULL);
 }

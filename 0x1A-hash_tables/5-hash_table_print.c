@@ -1,30 +1,34 @@
 #include "hash_tables.h"
+#include <stdio.h>
+
 /**
- * hash_table_print - function that prints the whole hash table, pythonic way.
- * @ht: pointer to the hash table structure
- * Return: pointer to the value string
+ * hash_table_print - Prints a hash table in order of hash
+ * @ht: Pointer to the hash table
  */
 void hash_table_print(const hash_table_t *ht)
 {
-	hash_node_t *node;
-	unsigned int idx = 0, flag = 0;
+	unsigned long int i = 0;
+	hash_node_t *tmp;
+	char first = 1;
 
-	if (ht == NULL)
+	if (!ht)
 		return;
+
 	printf("{");
-	while (idx < ht->size)
+
+	for (i = 0; i < ht->size; ++i)
 	{
-		if (ht->array[idx])
+		for (tmp = ht->array[i]; tmp; tmp = tmp->next)
 		{
-			for (node = ht->array[idx]; node; node = node->next)
+			if (first)
 			{
-				if (flag == 1)
-					printf(", ");
-				printf("'%s': '%s'", node->key, node->value);
-				flag = 1;
+				printf("'%s': '%s'", tmp->key, tmp->value);
+				first = 0;
 			}
+			else
+				printf(", '%s': '%s'", tmp->key, tmp->value);
 		}
-		idx++;
 	}
+
 	printf("}\n");
 }
